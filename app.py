@@ -5,6 +5,7 @@ import google.generativeai as genai
 from datetime import datetime
 import wikipediaapi
 from dotenv import load_dotenv
+from waitress import serve
 
 load_dotenv()
 
@@ -104,4 +105,4 @@ def clear_chat_history(leader_name):
     return jsonify({'status': 'success'})
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    serve(app, host="0.0.0.0", port=5000)
