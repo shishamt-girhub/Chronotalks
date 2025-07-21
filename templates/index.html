@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="welcome-section">
+    <div class="container">
+        <h1 class="welcome-title">Welcome to Talk2Leader</h1>
+        <p class="welcome-subtitle">Have a conversation with history's most famous leaders</p>
+        
+        <div class="selection-card">
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <label for="leaderSelect" class="form-label">
+                        <i class="fas fa-crown me-2"></i>Choose from Top 10 Leaders
+                    </label>
+                    <select class="form-select form-select-lg" id="leaderSelect">
+                        <option value="" selected disabled>Select a leader to chat with...</option>
+                        <option value="Mahatma Gandhi">Mahatma Gandhi</option>
+                        <option value="Nelson Mandela">Nelson Mandela</option>
+                        <option value="Abraham Lincoln">Abraham Lincoln</option>
+                        <option value="Martin Luther King Jr.">Martin Luther King Jr.</option>
+                        <option value="Winston Churchill">Winston Churchill</option>
+                        <option value="Mother Teresa">Mother Teresa</option>
+                        <option value="Albert Einstein">Albert Einstein</option>
+                        <option value="Leonardo da Vinci">Leonardo da Vinci</option>
+                        <option value="Marie Curie">Marie Curie</option>
+                        <option value="George Washington">George Washington</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <label for="customLeaderInput" class="form-label">
+                        <i class="fas fa-search me-2"></i>Or Search Any Leader
+                    </label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="customLeaderInput" 
+                               placeholder="Enter leader name...">
+                        <button class="btn btn-primary" type="button" id="searchLeaderBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <button type="button" class="btn btn-primary btn-lg" id="startChatBtn" disabled>
+                    <i class="fas fa-comments me-2"></i>Start Chat
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const leaderSelect = document.getElementById('leaderSelect');
+    const customLeaderInput = document.getElementById('customLeaderInput');
+    const searchLeaderBtn = document.getElementById('searchLeaderBtn');
+    const startChatBtn = document.getElementById('startChatBtn');
+    
+    let selectedLeader = '';
+    
+    leaderSelect.addEventListener('change', function() {
+        selectedLeader = this.value;
+        customLeaderInput.value = '';
+        startChatBtn.disabled = !selectedLeader;
+        
+        if (selectedLeader) {
+            startChatBtn.classList.add('loading');
+            setTimeout(() => startChatBtn.classList.remove('loading'), 500);
+        }
+    });
+    
+    searchLeaderBtn.addEventListener('click', function() {
+        const customLeader = customLeaderInput.value.trim();
+        if (customLeader) {
+            selectedLeader = customLeader;
+            leaderSelect.value = ''; 
+            startChatBtn.disabled = false;
+            
+            startChatBtn.classList.add('loading');
+            setTimeout(() => startChatBtn.classList.remove('loading'), 500);
+        }
+    });
+    
+    customLeaderInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchLeaderBtn.click();
+        }
+    });
+    
+    startChatBtn.addEventListener('click', function() {
+        if (selectedLeader) {
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Starting Chat...';
+            this.disabled = true;
+            
+            setTimeout(() => {
+                window.location.href = `/chat/${encodeURIComponent(selectedLeader)}`;
+            }, 500);
+        }
+    });
+    
+    const formControls = document.querySelectorAll('.form-select, .form-control');
+    formControls.forEach(control => {
+        control.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        
+        control.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %} 
